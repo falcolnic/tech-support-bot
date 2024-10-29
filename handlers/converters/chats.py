@@ -8,7 +8,7 @@ def convert_chats_dtos_to_message(chats: list[ChatListItemDTO]) -> str:
         (
             'List of all avaible chats:',
             '\n'.join(
-                (f"ChatOID: `{escape_markdown(chat.oid, version=2)}` Problem: {chat.title}" for chat in chats)  # type: ignore
+                (f"ChatOID: `{escape_markdown(chat.oid, version=2)}` Problem: {escape_markdown(chat.title, version=2)}" for chat in chats)  # type: ignore
             )
         )
     )
