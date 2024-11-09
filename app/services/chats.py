@@ -12,7 +12,7 @@ class BaseChatService(ABC):
 
 @dataclass
 class MongoDBChatService(ABC):
-
+    
     @abstractmethod
     async def set_current_chat(self, chat_oid: str, telegram_chat_id: str):
         ...
