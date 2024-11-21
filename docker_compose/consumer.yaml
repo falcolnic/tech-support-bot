@@ -1,3 +1,5 @@
+# Bot -> Consumer -> Consumer-logs 
+
 version: '3.9'
 
 services:

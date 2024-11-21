@@ -1,11 +1,17 @@
-import re
-from telegram import Update
+from telegram import Bot, Update
 from telegram.ext import ContextTypes
 
-from handlers.constants import SEND_MESSAGE_STATE
 from containers.factories import get_container
 from handlers.converters.chats import convert_chats_dtos_to_message
 from services.web import BaseChatWebService
+
+
+async def get_thread_name(bot: Bot, chat_id: int, message_thread_id: int) -> str:
+    # Get first message in thread
+    chat = await bot.get_chat(chat_id=chat_id)
+    message = await chat.get_message(message_thread_id)
+    # Return thread name
+    return message.text
 
 
 async def get_all_chats_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -39,18 +45,6 @@ async def set_chat_listener(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-async def start_dialog(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-            chat_id=update.effective_chat.id,  # type: ignore
-            text=(
-                'Now, you respond to the messages. Choose a message and write a'
-                'response. The user will see your response on the website.'
-            ),
-        )
-
-    return SEND_MESSAGE_STATE
-
-
 async def quit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=update.effective_chat.id,  # type: ignore
@@ -60,24 +54,12 @@ async def quit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def send_message_to_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.reply_to_message is None:  # type: ignore
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,  # type: ignore
-            text='Ошибка! Выберите сообщение на которое вы отвечаете.',
-        )
-        return
-
-    print(update.message.reply_to_message.text)
     try:
         # TODO: сделать паттерн под UUID4
-        chat_oid = re.findall(r'\s{1}\(.+\)', update.message.reply_to_message.text)[0].replace(
-            ' ', '',
-        ).replace('(', '').replace(')', '')
+        thread_name = await get_thread_name(context.bot, chat_id=update.message.chat_id, message_thread_id=update.message.message_id)
     except IndexError:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,  # type: ignore
             text='Необходимо ответить именно на сообщение пользователя.',
         )
         return
-
-    print(chat_oid,)
