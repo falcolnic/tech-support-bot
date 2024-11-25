@@ -1,4 +1,4 @@
-from telegram import Bot, Update
+from telegram import Update, Bot
 from telegram.ext import ContextTypes
 
 from containers.factories import get_container
@@ -7,22 +7,22 @@ from services.web import BaseChatWebService
 
 
 async def get_thread_name(bot: Bot, chat_id: int, message_thread_id: int) -> str:
-    # Get first message in thread
+    # Получаем первое сообщение в треде
     chat = await bot.get_chat(chat_id=chat_id)
     message = await chat.get_message(message_thread_id)
-    # Return thread name
+    # Возвращаем текст первого сообщения как название треда
     return message.text
 
 
-async def get_all_chats_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def get_all_chats_handlers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     container = get_container()
-    
+
     async with container() as request_container:
-        service = await request_container.get(BaseChatWebService)
+        service = await request_container.get(BaseChatWebService)  # type: ignore
         chats = await service.get_all_chats()
-        
+
         await context.bot.send_message(
-            chat_id=update.effective_chat.id,
+            chat_id=update.effective_chat.id,  # type: ignore
             text=convert_chats_dtos_to_message(chats=chats),
             parse_mode='MarkdownV2',
         )
@@ -30,7 +30,7 @@ async def get_all_chats_handler(update: Update, context: ContextTypes.DEFAULT_TY
 
 async def set_chat_listener(update: Update, context: ContextTypes.DEFAULT_TYPE):
     container = get_container()
-    
+
     async with container() as request_container:
         service = await request_container.get(BaseChatWebService)  # type: ignore
         await service.add_listener(
@@ -40,26 +40,33 @@ async def set_chat_listener(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await context.bot.send_message(
             chat_id=update.effective_chat.id,  # type: ignore
-            text='You connected to the chat',
+            text='You conected to the chat',
             parse_mode='MarkdownV2',
         )
 
 
 async def quit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,  # type: ignore
-            text='You left the chat',
-            parse_mode='MarkdownV2',
-        )
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,  # type: ignore
+        text='You left from the chat with client.',
+        parse_mode='MarkdownV2',
+    )
 
 
 async def send_message_to_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(
+        chat_id=update.message.chat_id,
+        text='You should answer exactly on users message.',
+        message_thread_id=update.message.message_thread_id,
+    )
+
     try:
         # TODO: сделать паттерн под UUID4
-        thread_name = await get_thread_name(context.bot, chat_id=update.message.chat_id, message_thread_id=update.message.message_id)
+        ...
     except IndexError:
         await context.bot.send_message(
             chat_id=update.effective_chat.id,  # type: ignore
-            text='Необходимо ответить именно на сообщение пользователя.',
+            text='You should answer exactly on users message.',
         )
+        
         return

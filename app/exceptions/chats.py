@@ -22,25 +22,45 @@ class BaseWebException(ApplicationException):
 class ChatListRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Failed to retrieve the list of all chats'
+        return 'Не удалось получить список всех чатов.'
 
 
 @dataclass(frozen=True, eq=False)
 class ListenerListRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Failed to retrieve the list of all listeners'
+        return 'Не удалось получить список всех слушателей чата.'
 
 
 @dataclass(frozen=True, eq=False)
 class ListenerAddRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Failed to add listener to the chat'
+        return 'Не удалось добавить слушателя к чату.'
+
+
+@dataclass(frozen=True, eq=False)
+class ChatAlreadyExistsError(ApplicationException):
+    telegram_chat_id: str | None = None
+    web_chat_id: str | None = None
+
+    @property
+    def message(self):
+        return 'Чат с такими данными уже существует'
+
+
+@dataclass(frozen=True, eq=False)
+class ChatInfoNotFoundError(ApplicationException):
+    telegram_chat_id: str | None = None
+    web_chat_id: str | None = None
+
+    @property
+    def message(self):
+        return 'Не удалось найти созданный чат'
 
 
 @dataclass(frozen=True, eq=False)
 class ChatInfoRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Failed to retrieve chat info'
+        return 'Не удалось получить информацию о чате.'

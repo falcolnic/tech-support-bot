@@ -9,4 +9,5 @@ def get_app():
     settings = get_settings()
     broker = KafkaBroker(settings.KAFKA_BROKER_URL)
     broker.include_router(router=router)
+
     return FastStream(broker=broker) # type: ignore

@@ -1,5 +1,4 @@
 # Bot -> Consumer -> Consumer-logs 
-
 version: '3.9'
 
 services:
@@ -20,4 +19,4 @@ services:
       - ../app/:/app/
       - ../.env:/app/.env
 
-    command: "faststream run --factory consumers.main:get_app --reload"
+    command: "debugpy --listen 0.0.0.0:5678 -m faststream run --factory consumers.main:get_app --reload"
