@@ -22,21 +22,21 @@ class BaseWebException(ApplicationException):
 class ChatListRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Не удалось получить список всех чатов.'
+        return 'Failed to get list of all chats'
 
 
 @dataclass(frozen=True, eq=False)
 class ListenerListRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Не удалось получить список всех слушателей чата.'
+        return 'Failed to get list of chat listeners'
 
 
 @dataclass(frozen=True, eq=False)
 class ListenerAddRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Не удалось добавить слушателя к чату.'
+        return 'Failed to add listener to chat'
 
 
 @dataclass(frozen=True, eq=False)
@@ -46,7 +46,7 @@ class ChatAlreadyExistsError(ApplicationException):
 
     @property
     def message(self):
-        return 'Чат с такими данными уже существует'
+        return 'Chat with that data already exists'
 
 
 @dataclass(frozen=True, eq=False)
@@ -56,11 +56,11 @@ class ChatInfoNotFoundError(ApplicationException):
 
     @property
     def message(self):
-        return 'Не удалось найти созданный чат'
+        return 'Failed to find created chat'
 
 
 @dataclass(frozen=True, eq=False)
 class ChatInfoRequestError(BaseWebException):
     @property
     def message(self):
-        return 'Не удалось получить информацию о чате.'
+        return 'Failed to get information about chat'
